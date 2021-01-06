@@ -21,10 +21,26 @@ var timers= require('timers') //import timers from 'timers'
 var url= require('url')
 var link= 'http://localhost:2000/user/jakarta?umur=12&gender=wanita'
 var objectUrl= url.parse(link, true)
-console.log(objectUrl)
-console.log(objectUrl.query.umur) // cara ambil umur di query
-console.log(objectUrl.query.gender) // cara ambil gender di query
-console.log(objectUrl.host) // cara ambil host
-console.log(objectUrl.port) // cara ambil port
+// console.log(objectUrl)
+// console.log('umur:', objectUrl.query.umur) // cara ambil umur di query
+// console.log('gender:', objectUrl.query.gender) // cara ambil gender di query
+// console.log('host:',objectUrl.host) // cara ambil host
+// console.log('port:', objectUrl.port) // cara ambil port
+// console.log('search:', objectUrl.search) // cara ambil hasil yg di search (hasilnya string)
+// console.log('query:', objectUrl.query) // cara ambil hasil yg di query (hasilnya object)
+
 // NOTE
 // semua ngambilnya pake dot karena udah di parse jd object javascript
+
+// REVIEW - OS MODULE
+var os= require('os');
+var namaCPU = os.hostname()
+var osTipe = os.type()
+var osPlatform = os.platform()
+var osRilis = os.release()
+var dirAwal = os.homedir()
+var ramSisa = os.freemem()
+var ramTotal = os.totalmem()
+// console.log(namaCPU)
+// console.log(osTipe)
+// console.log(osPlatform)
