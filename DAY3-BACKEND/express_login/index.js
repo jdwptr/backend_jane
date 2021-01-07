@@ -12,6 +12,8 @@ const serverExpress= express()
 
 const port= 2000
 
+// const url= require('url')
+// const alamat= url.parse(req.url)
 
 
 // NOTE pakai module
@@ -44,6 +46,12 @@ serverExpress.get('/users', (req,res) => {
     res.status(200).send(database)
 })
 
+serverExpress.post('/register', (req, res) => {
+    database.push(req.body)
+
+    res.status(200).send(database)
+})
+
 serverExpress.post('/login', (req, res) => {
     // NOTE inputan dari user, akan masuk ke dlm req.body
     const {username, password} = req.body
@@ -58,15 +66,9 @@ serverExpress.post('/login', (req, res) => {
     res.status(200).send(database[userIndex])
 })
 
-serverExpress.post('/register', (req, res) => {
-    database.push(req.body)
-
-    res.status(200).send(database)
-})
 
 serverExpress.post('/edit', (req, res) => {
-    const url= require('url')
-    const alamat= url.parse(req.url)
+    let index
 
     let itemUser= database[alamat.query]
     for (let key in database) {
@@ -80,5 +82,9 @@ serverExpress.post('/edit', (req, res) => {
     database.splice(alamat.query, 1, itemUser)
     res.status(200).send(database)
 })
+
+serverExpress.post('/delete', (req,res) => {
+
+}) 
 
 serverExpress.listen(port, () => console.log(`Server Express is running at ${port}`))
