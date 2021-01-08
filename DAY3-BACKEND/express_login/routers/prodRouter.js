@@ -6,7 +6,7 @@ const router= require('express').Router()
 const {product}= require('../controllers')
 
 // NOTE create router nya
-// NOTE pakai post bisa semua, mau diganti get, post, put, patch, delet bisa juga
+// NOTE pakai post bisa semua, mau diganti get, post, put, patch, delete bisa juga
 router.post('/getProd', product.getProd)
 router.post('/item/:index', product.item)
 router.post('/add', product.addProd)

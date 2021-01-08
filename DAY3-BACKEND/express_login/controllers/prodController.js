@@ -40,7 +40,9 @@ module.exports= {
         if (!name || !price) return res.status(400).send(`PLEASE INPUT ALL PRODUCTS DATA CORRECTLY`)
 
         products.push({
-            id: (products[products.length - 1].id) + 1
+            id: (products[products.length - 1].id) + 1,
+            name,
+            price
         })
 
         res.status(200).send(products)
@@ -49,11 +51,11 @@ module.exports= {
     editProd: (req, res) => {
         let tempProd= products[+req.params.index]
 
-        // NOTE kalau item nya gada
+        // NOTE cek ketersediaan item nya, jadi kalau item nya gada
         if (!tempProd) return res.status(400).send(`NO ITEM WITH INDEX ${req.params.index}`)
         console.log(req.body)
 
-        // NOTE looping uuntuk mengedit item
+        // NOTE looping untuk mengedit item
         for (let key in req.body) {
             for (let key2 in tempProd) {
                 if (key === key2) {
@@ -69,10 +71,10 @@ module.exports= {
         let tempProd= products[+req.params.index]
 
         // NOTE kalau usernya tidak ada
-        if (!tempUser) return res.status(400).send(`NO USERS WITH INDEX ${req.params.index}`)
+        if (!tempProd) return res.status(400).send(`NO ITEM WITH INDEX ${req.params.index}`)
     
-        database.splice([+req.params.index], 1)
+        products.splice([+req.params.index], 1)
     
-        res.status(200).send(database)
+        res.status(200).send(products)
     }
 }
