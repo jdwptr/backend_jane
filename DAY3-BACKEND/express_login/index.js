@@ -28,7 +28,9 @@ serverExpress.get('/home', (req, res) => {
 
 // NOTE connect to all router
 const {userRouter} = require('./routers')
+const {prodRouter} = require('./routers')
 serverExpress.use('/user', userRouter)
+serverExpress.use('/product', prodRouter)
 
 // REVIEW INI DIBAWAH BUAT SEBELOM ROUTER DAN CONTROLLER DIPISAH
 

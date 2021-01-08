@@ -1,3 +1,5 @@
+const {body, validationResult}= require('express-validator')
+
 let database = [
     {
         username: "lisa",
@@ -37,8 +39,20 @@ module.exports = {
     },
 
     register: (req, res) => {
+        let errors= validationResult(req)
+        console.log(errors)
+        console.log(errors.array())
+
+        const message= errors.array().map(
+            (item) => item.msg
+        )
+        console.log(message)
+
+        if (!errors.isEmpty()) {
+            return res.status(400).send({ message })
+        }
+
         database.push(req.body)
-    
         res.status(200).send(database)
     },
 
