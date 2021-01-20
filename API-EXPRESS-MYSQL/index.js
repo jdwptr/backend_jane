@@ -16,6 +16,9 @@ const app= express()
 // NOTE import module mysql unutk menyambungkan API dengan MySQL
 const mysql= require('mysql')
 
+// NOTE unutk .env
+require('dotenv').config()
+
 // NOTE apply middleware
 app.use(bodyParser.json())
 app.use(cors())
