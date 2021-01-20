@@ -28,6 +28,9 @@ const db= require('./database')
 const {productRouter}= require('./routers')
 app.use('/product', productRouter)
 
+const {userRouter}= require('./routers')
+app.use('/user', userRouter)
+
 db.connect((err) => {
     if (err) return console.log(`ERROR CONNECTING: ${err.stack}`)
     console.log(`CONNECTED AS ID: ${db.threadId}`)
