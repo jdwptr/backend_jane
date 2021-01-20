@@ -2,30 +2,43 @@ import React from 'react'
 import {
     Nav,
     Navbar,
-    NavDropdown
+    Dropdown
 } from 'react-bootstrap'
 
 import { Link } from 'react-router-dom'
+
+import { connect } from 'react-redux'
+
+import { logout } from '../action'
 
 class Navigation extends React.Component {
     render() {
         return (
             <div>
-                <Navbar bg="light"expand="lg">
+                <Navbar bg="light" expand="lg">
                     <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto">
                             <Nav.Link as={Link} to='/'>Home</Nav.Link>
                             <Nav.Link as={Link} to='/product'>Product</Nav.Link>
-                            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                            </NavDropdown>
                         </Nav>
+                        <Dropdown style={{ margin: '0 40px' }}>
+                            <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                {this.props.user || 'USERNAME'}
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                                {this.props.user
+                                    ?
+                                    <Dropdown.Item onClick={this.props.logout}>Logout</Dropdown.Item>
+                                    :
+                                    <>
+                                    <Dropdown.Item as={Link} to='/login'>Login</Dropdown.Item>
+                                    <Dropdown.Item as={Link} to='/register'>Register</Dropdown.Item>
+                                    </>
+                                }
+                            </Dropdown.Menu>
+                        </Dropdown>
                     </Navbar.Collapse>
                 </Navbar>
             </div>
@@ -33,4 +46,11 @@ class Navigation extends React.Component {
     }
 }
 
-export default Navigation
+const mapStateToProps = (state) => {
+    return {
+        user: state.user.username
+    }
+}
+
+export default connect(mapStateToProps, { logout })(Navigation)
+// NOTE connect (kiri, kanan) kiri data, kanan action

@@ -4,9 +4,10 @@ const { body, validationResult } = require('express-validator')
 // NOTE ini untuk encrypt pass
 const cryptojs = require('crypto-js')
 const SECRET_KEY = '!@#$%^&*'
+const {createToken}= require('../helpers/jwt')
 
 //NOTE import query help
-const { generateQuery } = require('../helpers/queryHelp')
+const { generateQuery, asyncQuery } = require('../helpers/queryHelp')
 
 // NOTE import connection (import database nya dulu)
 const db = require('../database')
@@ -30,10 +31,15 @@ module.exports = {
         // NOTE object destructuring
         const { username, password } = req.body
 
+        // REVIEW
+        // NOTE ENCRYPT PASS WITH CRYPTO JS
+        // NOTE data yg sudah di encrypt oleh crypto js tidak bisa didecrypt
+        const hashpass = cryptojs.HmacMD5(password, SECRET_KEY)
+
         // NOTE define query SQL
-        const queryLogin = `select username, password from users 
+        const queryLogin = `select id_users, username, email, password from users 
                         where username=${db.escape(username)} 
-                        and password=${db.escape(password)}`
+                        and password=${db.escape(hashpass.toString())}`
 
         db.query(queryLogin, (err, result) => {
             // NOTE check error
@@ -45,10 +51,36 @@ module.exports = {
             // NOTE cek kalau login berhasil
             if (result.length === 0) return res.status(400).send('USERNAME OR PASSWORD IS WRONG')
 
+            // NOTE ini untuk create token
+            let token= createToken({ id: result[0].id_users, username: result[0].username })
+            console.log(result[0])
+
+            // NOTE input token to result
+            result[0].token = token
+
+            console.log(result[0])
 
             // NOTE kalo berhasil
             res.status(200).send(result[0])
         })
+    },
+    
+    keepLogin: async(req, res) => {
+        console(req.user)
+
+        try {
+            // NOTE query u/ get data from database
+            const getUser= `select id_users, username, email from users
+                            where id_users${db.escape(req.user.id)}`
+        
+            const result= await asyncQuery(getUser)
+            console.log(result)
+
+            res.status(200).send(result[0])
+        }
+        catch{
+            console.log(err)
+        }
     },
 
     register: (req, res) => {
@@ -99,13 +131,26 @@ module.exports = {
         // NOTE edit butuh params, untuk yg di edit itu user berapa
         const id = +req.params.id
 
-        const queryCekUser = `select * from users where id_users=${id}`
+        // note validation input from user
+        const errors = validationResult(req)
+        console.log(errors.errors)
+
+        const errUsername = errors.errors.filter(item => item.param === 'username' && item.value !== undefined)
+        console.log(errUsername)
+        if (errUsername.length !== 0) return res.status(400).send(errUsername[0].msg)
+
+        const errEmail = errors.errors.filter(item => item.param === 'email' && item.value !== undefined)
+        console.log(errEmail)
+        if (errEmail.length !== 0) return res.status(400).send(errEmail[0].msg)
+        
+
+        const queryCekUser = `select * from users where id_users=${db.escape(id)}`
 
         db.query(queryCekUser, (err, result) => {
             if (err) return res.status(500).send(err)
 
             // NOTE kalau id user gaketemu/gak ada, tampilkan
-            if (result.length === 0) res.status(200).send(`USER WITH ID: ${id}, IS NOT FOUND`)
+            if (result.length === 0) return res.status(200).send(`USER WITH ID: ${id}, IS NOT FOUND`)
 
             // NOTE pakai helper buat kalo dia mau ganti username doang, emial pass ngga dll bisa jd nya
             const queryEditUser = `update users set${generateQuery(req.body)} where id_users=${id}`
@@ -125,13 +170,17 @@ module.exports = {
         // NOTE edit butuh params, untuk yg di edit itu user berapa
         const id = +req.params.id
 
-        const queryCekUser = `select * from users where id_users=${id}`
+        // NOTE validation input from user
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) return res.status(400).send(errors.array()[0].msg)
+
+        const queryCekUser = `select * from users where id_users=${db.escape(id)}`
 
         db.query(queryCekUser, (err, result) => {
             if (err) return res.status(500).send(err)
 
             // NOTE kalau id user gaketemu/gak ada, tampilkan
-            if (result.length === 0) res.status(200).send(`USER WITH ID: ${id}, IS NOT FOUND`)
+            if (result.length === 0) return res.status(200).send(`USER WITH ID: ${id}, IS NOT FOUND`)
 
             // REVIEW
             // NOTE ENCRYPT PASS WITH CRYPTO JS
