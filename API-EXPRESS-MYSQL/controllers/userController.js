@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator')
 
 // NOTE ini untuk encrypt pass
 const cryptojs = require('crypto-js')
-const SECRET_KEY = '!@#$%^&*'
+const SECRET_KEY = process.env.SECRET_KEY
 const {createToken}= require('../helpers/jwt')
 
 //NOTE import query help

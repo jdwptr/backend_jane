@@ -3,11 +3,11 @@ const mysql= require('mysql')
 
 // NOTE SETUP MYSQL
 const connection = mysql.createConnection({
-    host     : 'localhost',
-    port     :  3306,
-    user     : 'jdwptr',
-    password : '2695Jejj$',
-    database : 'practice_jcwm15'
+    host     : process.env.DB_HOST,
+    port     : process.env.DB_PORT,
+    user     : process.env.DB_USER,
+    password : process.env.DB_PASS,
+    database : process.env.DB_DBNAME
   })
 
   module.exports= connection
